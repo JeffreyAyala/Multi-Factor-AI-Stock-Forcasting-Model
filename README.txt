@@ -1,1 +1,1 @@
-This folder originally contained the enhanced project. If you need full regeneration, ask ChatGPT to rebuild.
+C++ + Python ML system for real-time stock prediction using Polygon.io and XGBoost
