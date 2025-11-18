@@ -1,0 +1,97 @@
+body{
+    font-family: Arial, sans-serif;
+    background:#111827;
+    color:#e5e7eb;
+    margin:0;
+}
+
+.container{
+    max-width:1200px;
+    margin:40px auto;
+    background:#1f2937;
+    padding:20px 30px 30px 30px;
+    border-radius:10px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+h1{
+    margin-top:0;
+    text-align:center;
+    font-size:2.5rem;
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+input{
+    padding:6px 10px;
+    border-radius:4px;
+    border:1px solid #4b5563;
+    background:#111827;
+    color:#e5e7eb;
+}
+
+.controls button{
+    padding:8px 16px;
+    border-radius:4px;
+    border:none;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+.controls button:hover{
+    background:#1d4ed8;
+}
+
+/* Horizon Buttons */
+.horizon-buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-bottom:20px;
+    color:#d1d5db;
+}
+
+.horizon-buttons button{
+    padding:6px 12px;
+    border-radius:4px;
+    border:none;
+    background:#374151;
+    color:#e5e7eb;
+    cursor:pointer;
+    font-size:0.9rem;
+}
+.horizon-buttons button:hover{
+    background:#4b5563;
+}
+.horizon-buttons button.active{
+    background:#2563eb;
+}
+
+.info{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    justify-content:space-around;
+    margin-bottom:15px;
+}
+
+.info p{
+    margin:4px 0;
+    font-size:1rem;
+}
+
+canvas{
+    background:#111827;
+    border-radius:6px;
+}
+
+
+

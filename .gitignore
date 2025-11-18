@@ -1,0 +1,41 @@
+# Ignore Python model files
+ml/models/*.json
+
+# Ignore your API key (if you store it in a file)
+apikey.txt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments (if you use them)
+venv/
+env/
+
+# VS Build artifacts
+*.obj
+*.pdb
+*.idb
+*.exe
+*.ilk
+*.pch
+*.manifest
+*.tlog
+*.user
+*.suo
+*.cache
+
+Debug/
+Release/
+x64/
+ipch/
+
+# Logs
+*.log
+
+# Ignore CMake (if used)
+CMakeFiles/
+CMakeCache.txt
+
+# Ignore node_modules (if future UI expands)
+node_modules/

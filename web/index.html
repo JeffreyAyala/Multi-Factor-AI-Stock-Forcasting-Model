@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Stock Predictor</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <h1>Stock Predictor</h1>
+
+    <!-- Ticker Controls -->
+    <div class="controls">
+        <label>
+            Ticker:
+            <input id="ticker" value="AAPL"/>
+        </label>
+        <button onclick="loadData()">Get Prediction</button>
+    </div>
+
+    <!-- Prediction Horizon Buttons -->
+    <div class="horizon-buttons">
+        <span>Predict ahead:</span>
+        <button onclick="setAhead(1)">1m</button>
+        <button onclick="setAhead(5)">5m</button>
+        <button onclick="setAhead(15)">15m</button>
+        <button onclick="setAhead(30)">30m</button>
+        <button onclick="setAhead(60)">60m</button>
+    </div>
+
+    <!-- Data Info -->
+    <div class="info">
+        <p><strong>Current:</strong> <span id="current">-</span></p>
+        <p><strong id="prediction-label">Prediction (+1 min):</strong> <span id="prediction">-</span></p>
+        <p><strong>SMA20:</strong> <span id="sma20">-</span></p>
+        <p><strong>EMA20:</strong> <span id="ema20">-</span></p>
+        <p><strong>RSI14:</strong> <span id="rsi14">-</span></p>
+    </div>
+
+    <!-- Chart -->
+    <canvas id="chart" height="140"></canvas>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
+
+
+
