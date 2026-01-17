@@ -1,20 +1,16 @@
-# Ignore Python model files
-ml/models/*.json
-
-# Ignore your API key (if you store it in a file)
+# Ignore API keys (if used)
 apikey.txt
 
 # Python cache
 __pycache__/
 *.pyc
 
-# Virtual environments (if you use them)
+# Virtual environments
 venv/
 env/
 
 # Visual Studio internal folder
 .vs/
-
 
 # VS Build artifacts
 *.obj
@@ -41,5 +37,6 @@ ipch/
 CMakeFiles/
 CMakeCache.txt
 
-# Ignore node_modules (if future UI expands)
+# Ignore node_modules (future UI)
 node_modules/
+
