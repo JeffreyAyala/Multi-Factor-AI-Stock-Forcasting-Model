@@ -1,0 +1,35 @@
+{
+  "ticker": "GOOGL",
+  "feature_cols": [
+    "close",
+    "volume",
+    "ret1",
+    "ret5",
+    "ret15",
+    "sma20",
+    "ema20",
+    "rsi14",
+    "close_sma20_diff",
+    "close_over_sma20",
+    "vol10",
+    "vol20",
+    "vol_zscore",
+    "news_sent",
+    "pcr",
+    "call_oi",
+    "put_oi",
+    "opt_bullish",
+    "vix",
+    "hour",
+    "is_london",
+    "is_newyork",
+    "is_powerhour"
+  ],
+  "horizons": [
+    1,
+    5,
+    15,
+    30,
+    60
+  ]
+}
