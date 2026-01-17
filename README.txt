@@ -1,1 +1,0 @@
-This folder originally contained the enhanced project. If you need full regeneration, ask ChatGPT to rebuild.
