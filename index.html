@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Factor AI Stock Forecasting Model</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            /* Reverted to Original Blue Accent */
+            --accent: #3b82f6; 
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #334155;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1.title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            /* Reverted Gradient */
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .label-text {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        input {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input#ticker {
+            width: 100px;
+            text-transform: uppercase;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Horizon Buttons */
+        .horizon-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .horizon-buttons span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .horizon-buttons button {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .horizon-buttons button.active {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Grid Layout */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-box p {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .stat-box strong {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-box span {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+        }
+
+        /* Specific text colors */
+        .bullish { color: var(--success); }
+        .bearish { color: var(--danger); }
+        .neutral { color: var(--text-muted); }
+        .warning-text { color: var(--warning); font-size: 0.8rem; display: block; text-align: center; margin-top: 5px; }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        
+        #loading-msg {
+            display: none;
+            text-align: center;
+            color: var(--accent);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div>
+        <h1 class="title">Multi-Factor AI Stock Forecasting Model</h1>
+        <div class="subtitle">Enter Ticker below. (Key configured in code)</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <label>
+            <span class="label-text">Ticker:</span>
+            <input id="ticker" value="AAPL" onkeypress="handleEnter(event)"/>
+        </label>
+        <button id="fetchBtn" onclick="loadData()">Get Prediction</button>
+    </div>
+    <div id="loading-msg">Fetching live market data...</div>
+
+    <!-- Prediction Buttons -->
+    <div class="horizon-buttons" id="horizon-group">
+        <span>Predict ahead:</span>
+        <button onclick="setAhead(1)" class="time-btn active" data-val="1">1m</button>
+        <button onclick="setAhead(5)" class="time-btn" data-val="5">5m</button>
+        <button onclick="setAhead(15)" class="time-btn" data-val="15">15m</button>
+        <button onclick="setAhead(30)" class="time-btn" data-val="30">30m</button>
+        <button onclick="setAhead(60)" class="time-btn" data-val="60">60m</button>
+    </div>
+
+    <!-- Three Column Grid -->
+    <div class="grid-3">
+
+        <!-- Column 1 -->
+        <div class="stat-box">
+            <p><strong>Current Price:</strong> <span id="current">---</span></p>
+            <p><strong>Model Nowcast:</strong> <span id="nowcast">---</span></p>
+            <p><strong id="prediction-label">Prediction (+1m):</strong>
+                <span id="prediction">---</span></p>
+            <span id="source-tag" class="warning-text">Source: Simulation</span>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="stat-box">
+            <p><strong>SMA 20:</strong> <span id="sma20">---</span></p>
+            <p><strong>EMA 20:</strong> <span id="ema20">---</span></p>
+            <p><strong>RSI 14:</strong> <span id="rsi14">---</span></p>
+            <p><strong>Magnetic Zone:</strong> <span id="magZone">---</span></p>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="stat-box">
+            <p><strong>Trend Strength:</strong> <span id="trend">---</span></p>
+            <p><strong>Volume Pressure:</strong> <span id="volPressure">---</span></p>
+            <p><strong>Volatility:</strong> <span id="volatility">---</span></p>
+        </div>
+
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-container">
+        <canvas id="chart"></canvas>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================================
+    //  CONFIGURATION: PASTE YOUR POLYGON API KEY BELOW
+    // ==========================================================
+    const POLYGON_API_KEY = "iEt9sFSDGEvS1qdxzKn9ggSLCyBBpG5Q"; 
+    
+    // --- State Management ---
+    let myChart = null;
+    let currentPrice = 150.00; 
+    let predictionHorizon = 1; 
+    let historicData = []; 
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        loadData(); 
+    });
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') loadData();
+    }
+
+    // --- Main Logic Function ---
+    async function loadData() {
+        const ticker = document.getElementById('ticker').value.toUpperCase();
+        const btn = document.getElementById('fetchBtn');
+        const loader = document.getElementById('loading-msg');
+        
+        btn.disabled = true;
+        loader.style.display = 'block';
+
+        try {
+            if (POLYGON_API_KEY && POLYGON_API_KEY.length > 5) {
+                // REAL DATA MODE (Polygon)
+                await fetchRealData(ticker, POLYGON_API_KEY);
+                document.getElementById('source-tag').innerText = "Source: Polygon.io Live API";
+                document.getElementById('source-tag').style.color = "var(--success)";
+            } else {
+                // SIMULATION MODE
+                simulateMarketData(ticker);
+                document.getElementById('source-tag').innerText = "Source: Demo Simulation (No Key)";
+                document.getElementById('source-tag').style.color = "var(--warning)";
+            }
+
+            // Calculations & UI Updates (Shared Logic)
+            processAndRender(ticker);
+
+        } catch (err) {
+            console.error(err);
+            alert("Error fetching data. Check your Polygon key or ticker symbol.\nNote: Free Polygon keys often have rate limits (5 calls/min).");
+        } finally {
+            btn.disabled = false;
+            loader.style.display = 'none';
+        }
+    }
+
+    function processAndRender(ticker) {
+        // 1. Calculate Indicators
+        const sma = calculateSMA(historicData, 20);
+        const ema = calculateEMA(historicData, 20);
+        const rsi = calculateRSI(historicData, 14);
+        const volatility = calculateVolatility(historicData, 20);
+
+        // 2. AI Model Logic (Heuristic)
+        const trendDir = sma > currentPrice ? -1 : 1; 
+        // Add some noise + trend logic for the "Prediction"
+        const predictedChange = (Math.random() * volatility * trendDir * 0.5) + (Math.random() * 0.2 - 0.1);
+        const predictedPrice = currentPrice + predictedChange;
+
+        // 3. Update UI DOM Elements
+        updateUI(ticker, sma, ema, rsi, predictedPrice, volatility);
+
+        // 4. Render Chart
+        renderChart(historicData, sma, ema, predictedPrice);
+    }
+
+    function setAhead(minutes) {
+        predictionHorizon = minutes;
+        
+        document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.querySelector(`.time-btn[data-val="${minutes}"]`);
+        if(activeBtn) activeBtn.classList.add('active');
+
+        document.getElementById('prediction-label').innerText = `Prediction (+${minutes}m):`;
+        
+        // Re-run the rendering (no need to refetch data)
+        const ticker = document.getElementById('ticker').value;
+        processAndRender(ticker);
+    }
+
+    // --- Data Fetching (Polygon.io) ---
+    async function fetchRealData(symbol, token) {
+        // Polygon expects YYYY-MM-DD or ms timestamp.
+        // We want the last ~100 data points. 
+        // 1 day is usually safe to cover market open.
+        const now = Date.now();
+        const twoDaysAgo = now - (2 * 24 * 60 * 60 * 1000); 
+
+        // Endpoint: /v2/aggs/ticker/{ticker}/range/{multiplier}/{timespan}/{from}/{to}
+        // Fetch 1-minute candles
+        const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/minute/${twoDaysAgo}/${now}?adjusted=true&sort=asc&limit=500&apiKey=${token}`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.status !== "OK" && data.status !== "DELAYED") {
+             throw new Error(data.error || "Polygon API Error");
+        }
+        
+        if (!data.results || data.results.length === 0) {
+            throw new Error("No data found for symbol (Market might be closed or invalid ticker)");
+        }
+
+        // Polygon Data Structure: { results: [ { c, h, l, o, t, v }, ... ] }
+        historicData = data.results.map(candle => {
+            return {
+                x: candle.t, // Timestamp
+                price: candle.c,
+                // FORCE NY TIMEZONE
+                label: new Date(candle.t).toLocaleTimeString('en-US', {
+                    hour: '2-digit', 
+                    minute:'2-digit', 
+                    timeZone: 'America/New_York'
+                })
+            };
+        });
+
+        // We only want the last ~60 points for the chart to keep it clean
+        if (historicData.length > 60) {
+            historicData = historicData.slice(historicData.length - 60);
+        }
+
+        currentPrice = historicData[historicData.length - 1].price;
+    }
+
+    // --- UI Updaters ---
+    function updateUI(ticker, sma, ema, rsi, predictedPrice, volatility) {
+        const fmt = (num) => `$${num.toFixed(2)}`;
+        
+        document.getElementById('current').innerText = fmt(currentPrice);
+        
+        const nowcast = currentPrice + (Math.random() * 0.02 - 0.01); 
+        document.getElementById('nowcast').innerText = fmt(nowcast);
+        
+        // Adjust prediction based on horizon
+        const horizonMult = Math.sqrt(predictionHorizon); 
+        const horizonPrice = currentPrice + ((predictedPrice - currentPrice) * horizonMult);
+        
+        const predEl = document.getElementById('prediction');
+        predEl.innerText = fmt(horizonPrice);
+        predEl.className = horizonPrice > currentPrice ? 'bullish' : 'bearish';
+
+        document.getElementById('sma20').innerText = fmt(sma);
+        document.getElementById('ema20').innerText = fmt(ema);
+        
+        const rsiEl = document.getElementById('rsi14');
+        rsiEl.innerText = rsi.toFixed(1);
+        if(rsi > 70) rsiEl.className = 'bearish'; 
+        else if(rsi < 30) rsiEl.className = 'bullish'; 
+        else rsiEl.className = 'neutral';
+
+        const magZone = sma; 
+        document.getElementById('magZone').innerText = fmt(magZone);
+
+        const trendEl = document.getElementById('trend');
+        const isUptrend = currentPrice > ema;
+        trendEl.innerText = isUptrend ? "Bullish" : "Bearish";
+        trendEl.style.color = isUptrend ? "var(--success)" : "var(--danger)";
+
+        const volEl = document.getElementById('volPressure');
+        volEl.innerText = rsi > 50 ? "Buying" : "Selling";
+        volEl.className = rsi > 50 ? 'bullish' : 'bearish';
+
+        document.getElementById('volatility').innerText = volatility.toFixed(2) + "%";
+    }
+
+    // --- Math Helpers ---
+    function calculateSMA(data, period) {
+        if (data.length < period) return data[data.length-1].price;
+        const slice = data.slice(data.length - period);
+        const sum = slice.reduce((a, b) => a + b.price, 0);
+        return sum / period;
+    }
+
+    function calculateEMA(data, period) {
+        const k = 2 / (period + 1);
+        let ema = data[0].price;
+        for (let i = 1; i < data.length; i++) {
+            ema = data[i].price * k + ema * (1 - k);
+        }
+        return ema;
+    }
+
+    function calculateRSI(data, period) {
+        if (data.length < period + 1) return 50;
+        let gains = 0, losses = 0;
+        
+        // Initial Average
+        for (let i = 1; i <= period; i++) {
+            const diff = data[i].price - data[i-1].price;
+            if (diff > 0) gains += diff;
+            else losses -= diff;
+        }
+        let avgGain = gains / period;
+        let avgLoss = losses / period;
+
+        // Smoothing
+        for (let i = period + 1; i < data.length; i++) {
+            const diff = data[i].price - data[i-1].price;
+            const gain = diff > 0 ? diff : 0;
+            const loss = diff < 0 ? -diff : 0;
+            
+            avgGain = ((avgGain * (period - 1)) + gain) / period;
+            avgLoss = ((avgLoss * (period - 1)) + loss) / period;
+        }
+
+        if (avgLoss === 0) return 100;
+        const rs = avgGain / avgLoss;
+        return 100 - (100 / (1 + rs));
+    }
+
+    function calculateVolatility(data, period) {
+        if (data.length < 2) return 0;
+        // Simple standard deviation of returns
+        const returns = [];
+        for(let i=1; i<data.length; i++) {
+            returns.push((data[i].price - data[i-1].price) / data[i-1].price);
+        }
+        
+        const slice = returns.slice(returns.length - Math.min(period, returns.length));
+        const mean = slice.reduce((a,b) => a+b, 0) / slice.length;
+        const variance = slice.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / slice.length;
+        
+        return Math.sqrt(variance) * 100; // as percentage
+    }
+
+    // --- Mock Data Generator ---
+    function simulateMarketData(ticker) {
+        let price = (Math.random() * 100) + 100; 
+        if(ticker === 'AAPL') price = 175;
+        if(ticker === 'TSLA') price = 240;
+        if(ticker === 'NVDA') price = 450;
+
+        historicData = [];
+        const now = new Date();
+        
+        for (let i = 0; i < 50; i++) {
+            const change = (Math.random() - 0.5) * 2;
+            price += change;
+            historicData.push({
+                x: i, 
+                price: price,
+                // FORCE NY TIMEZONE
+                label: new Date(now.getTime() - (50 - i) * 60000).toLocaleTimeString('en-US', {
+                    hour: '2-digit', 
+                    minute:'2-digit',
+                    timeZone: 'America/New_York'
+                })
+            });
+        }
+        currentPrice = historicData[historicData.length - 1].price;
+    }
+
+    // --- Chart.js Rendering ---
+    function renderChart(data, sma, ema, prediction) {
+        const ctx = document.getElementById('chart').getContext('2d');
+
+        const labels = data.map(d => d.label);
+        const prices = data.map(d => d.price);
+
+        // Add Prediction point to chart data
+        const futureLabels = [...labels, "Forecast"];
+        
+        const priceDataset = {
+            label: 'Price',
+            data: prices,
+            borderColor: '#3b82f6', // Reverted to Blue
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 0
+        };
+
+        const predictionPoint = {
+            label: 'AI Forecast',
+            data: [...new Array(prices.length - 1).fill(null), prices[prices.length-1], prediction],
+            borderColor: '#10b981',
+            borderDash: [5, 5],
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: '#10b981'
+        };
+
+        if (myChart) {
+            myChart.destroy();
+        }
+
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: futureLabels,
+                datasets: [priceDataset, predictionPoint]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#94a3b8' }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8', maxTicksLimit: 8 }
+                    },
+                    y: {
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
+
+
+
+
+

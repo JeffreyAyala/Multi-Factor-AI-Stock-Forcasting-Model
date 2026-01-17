@@ -1,0 +1,127 @@
+body{
+    font-family: Arial, sans-serif;
+    background:#111827;
+    color:#e5e7eb;
+    margin:0;
+}
+
+.container{
+    max-width:1250px;
+    margin:40px auto;
+    background:#1f2937;
+    padding:30px 40px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+.title{
+    text-align:center;
+    font-size:3rem;
+    font-weight:800;
+    margin-bottom:25px;
+    color:#f3f4f6;
+    letter-spacing:-1px;
+}
+
+/* Controls */
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    margin-bottom:15px;
+}
+
+.label-text{
+    margin-right:4px;
+}
+
+input{
+    padding:6px 10px;
+    border-radius:4px;
+    border:1px solid #4b5563;
+    background:#111827;
+    color:#e5e7eb;
+}
+
+.controls button{
+    padding:8px 16px;
+    border-radius:4px;
+    border:none;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+.controls button:hover{
+    background:#1d4ed8;
+}
+
+/* Horizon Buttons */
+.horizon-buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-bottom:25px;
+}
+.horizon-buttons button{
+    padding:6px 12px;
+    border-radius:4px;
+    border:none;
+    background:#374151;
+    color:#e5e7eb;
+    cursor:pointer;
+}
+.horizon-buttons button:hover{
+    background:#4b5563;
+}
+.horizon-buttons button.active{
+    background:#2563eb;
+}
+
+/* 3 Column Grid */
+.grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px 40px;
+    margin-bottom:30px;
+}
+
+.stat-box{
+    background:#1e293b;
+    padding:20px 22px;
+    border-radius:8px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+}
+.stat-box p{
+    margin:6px 0;
+    font-size:1.05rem;
+}
+
+/* Highlight Colors */
+#nowcast{
+    color:#22c55e;
+    font-weight:bold;
+}
+#prediction{
+    color:#facc15;
+    font-weight:bold;
+}
+#current{
+    color:#93c5fd;
+    font-weight:bold;
+}
+
+/* Chart */
+canvas{
+    background:#111827;
+    border-radius:8px;
+    margin-top:15px;
+}
+
+
+
+
+
+

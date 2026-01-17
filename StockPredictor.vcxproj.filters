@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="backend\src\HttpClient.cpp" />
+    <ClCompile Include="backend\src\PolygonAPI.cpp" />
+    <ClCompile Include="backend\src\LinearRegression.cpp" />
+    <ClCompile Include="backend\src\Predictor.cpp" />
+    <ClCompile Include="backend\src\Server.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="backend\src\json.hpp" />
+    <ClInclude Include="backend\src\HttpClient.hpp" />
+    <ClInclude Include="backend\src\PolygonAPI.hpp" />
+    <ClInclude Include="backend\src\LinearRegression.hpp" />
+    <ClInclude Include="backend\src\Predictor.hpp" />
+    <ClInclude Include="backend\src\Indicators.hpp" />
+  </ItemGroup>
+</Project>
